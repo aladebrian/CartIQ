@@ -20,36 +20,79 @@ export default function RegisterScreen({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleRegister = () => {
-    if (!name || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
+  // const handleRegister = () => {
+  //   if (!name || !email || !password || !confirmPassword) {
+  //     Alert.alert('Error', 'Please fill in all fields');
+  //     return;
+  //   }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
-      return;
-    }
+  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //   if (!emailRegex.test(email)) {
+  //     Alert.alert('Error', 'Please enter a valid email address');
+  //     return;
+  //   }
 
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
-      return;
-    }
+  //   if (password.length < 6) {
+  //     Alert.alert('Error', 'Password must be at least 6 characters');
+  //     return;
+  //   }
 
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return;
-    }
+  //   if (password !== confirmPassword) {
+  //     Alert.alert('Error', 'Passwords do not match');
+  //     return;
+  //   }
 
-    // Navigate to dashboard with user info
-    navigation.navigate('Dashboard', { 
-      user: { 
-        name: name, 
-        email: email 
-      } 
+  //   // Navigate to dashboard with user info
+  //   navigation.navigate('Dashboard', { 
+  //     user: { 
+  //       name: name, 
+  //       email: email 
+  //     } 
+  //   });
+  // };
+
+ const BACKEND_URL = "http://10.2.152.252:8000/api/register/"; // Or /api/user/register/
+
+const handleRegister = async () => {
+  if (!name || !email || !password || !confirmPassword) {
+    Alert.alert('Error', 'Please fill in all fields');
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    Alert.alert('Error', 'Please enter a valid email address');
+    return;
+  }
+
+  if (password.length < 6) {
+    Alert.alert('Error', 'Password must be at least 6 characters');
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    Alert.alert('Error', 'Passwords do not match');
+    return;
+  }
+
+  try {
+    const response = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // Adapt payload to match backend model:
+      body: JSON.stringify({ username: name, email, password })
     });
-  };
+
+    if (!response.ok) throw new Error('Registration failed: ' + (await response.text()));
+    const data = await response.json();
+    // Save user/token if backend returns it
+    navigation.navigate('Dashboard', { user: { name, email } });
+  } catch (err) {
+    Alert.alert('Registration failed', err.message);
+  }
+};
+
+
 
   return (
     <KeyboardAvoidingView

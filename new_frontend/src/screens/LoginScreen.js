@@ -13,31 +13,65 @@ import {
 } from 'react-native';
 
 export default function LoginScreen({ navigation }) {
+  console.log("LoginScreen mounted!");
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
-      return;
-    }
+const BACKEND_URL = "http://10.2.152.252:8000/api/token/"; // Your actual IP
 
-    // Simple email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
-      return;
-    }
+const handleLogin = async () => {
 
-    // Navigate to dashboard with user info
-    navigation.navigate('Dashboard', { 
-      user: { 
-        name: email.split('@')[0], 
-        email: email 
-      } 
+
+  console.log('Login pressed:', email, password);
+
+  if (!email || !password) {
+    Alert.alert('Error', 'Please enter both email and password');
+    console.log('Missing email or password');
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    Alert.alert('Error', 'Please enter a valid email address');
+    console.log('Invalid email format');
+    return;
+  }
+
+  console.log('Attempting fetch to:', BACKEND_URL);
+
+  try {
+    const response = await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: email, password })
     });
-  };
+
+    console.log('Fetch completed with status:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.log('Login failed, backend responded:', errorText);
+      throw new Error('Invalid credentials: ' + errorText);
+    }
+
+    const data = await response.json();
+    console.log('Response JSON data:', data);
+
+    if (!data.access) {
+      console.log('No access token in response');
+      throw new Error('Login failed: No access token received');
+    }
+
+    console.log('Login successful, navigating to dashboard');
+    navigation.navigate('Dashboard', { user: { email } });
+
+  } catch (err) {
+    Alert.alert('Login failed', err.message);
+    console.log('Error during login:', err);
+  }
+};
+
 
   return (
     <KeyboardAvoidingView
@@ -49,7 +83,7 @@ export default function LoginScreen({ navigation }) {
           <View style={styles.iconContainer}>
             <Ionicons name="cart" size={64} color="#16a34a" />
           </View>
-          <Text style={styles.title}>CartIQ</Text>
+          <Text style={styles.title}>CartIQ test debug</Text>
           <Text style={styles.subtitle}>Smart Grocery Shopping</Text>
         </View>
 
@@ -91,8 +125,12 @@ export default function LoginScreen({ navigation }) {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          {/* <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             <Text style={styles.loginButtonText}>Sign In</Text>
+          </TouchableOpacity> */}
+
+          <TouchableOpacity style={styles.loginButton} onPress={() => {console.log('DEBUG BUTTON PRESS!')}}>
+          <Text style={styles.loginButtonText}>Sign In</Text>
           </TouchableOpacity>
 
           <View style={styles.footer}>

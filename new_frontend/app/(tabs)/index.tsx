@@ -19,21 +19,47 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Please enter both email and password");
-      return;
+  const BACKEND_URL = "http://10.2.152.252:8000/api/token/";
+
+const handleLogin = async () => {
+  if (!email || !password) {
+    Alert.alert("Error", "Please enter both email and password");
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    Alert.alert("Error", "Please enter a valid email address");
+    return;
+  }
+
+  try {
+    const response = await fetch(BACKEND_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: email, password }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error("Invalid credentials: " + errorText);
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      Alert.alert("Error", "Please enter a valid email address");
-      return;
+    const data = await response.json();
+
+    if (!data.access) {
+      throw new Error("Login failed: No access token received");
     }
 
-    // Navigate to explore tab (dashboard)
+    // Login successful, navigate to explore/dashboard
     router.push("/explore");
-  };
+    } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    Alert.alert("Login failed", message);
+  }
+
+};
+
 
   return (
     <KeyboardAvoidingView
