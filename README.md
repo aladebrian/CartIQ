@@ -30,7 +30,7 @@ DB_USER=""
 DB_NAME=""
 DB_PWD=""
 ```
-according to your specifications. DB_USER refers to the username, while DB_NAME refers to the database name. 
+according to your specifications. DB_USER refers to the username, while DB_NAME refers to the database name.  
 mine is:
 ```bash
 DB_HOST="127.0.0.1"
@@ -40,29 +40,29 @@ DB_NAME="*****"
 DB_PWD="*****"
 ```
 In MySQL workbench:
-create a new instance (if necessary), by clicking the + next to MySQL connections.
-Connection name can be anything, but match Hostname, Port, Username, and Password  to .env file.
-click OK.
+create a new instance (if necessary), by clicking the + next to MySQL connections.  
+Connection name can be anything, but match Hostname, Port, Username, and Password  to .env file.  
+Click OK.  
 
 start the MySQL server:
 ```bash
 mysqld start
 ```
 troubleshooting:
-if mysqld command doesn't exist: add MySQL bin to system environment variables PATH (mine is "C:\Program Files\MySQL\MySQL Server 8.0\bin")
-if mysqld command gives testing error: 
+if mysqld command doesn't exist: add MySQL bin to system environment variables PATH (mine is "C:\Program Files\MySQL\MySQL Server 8.0\bin")  
+if mysqld command gives testing error:  
 ```bash
 cd "<your MySQL bin path>"
 mysqld --initialize
 ```
-run the MySQL server:
+run the MySQL server:  
 ```bash
 cd backend
 python manage.py makemigrations
 python manage.py migrate
 ```
 troubleshooting:
-if makemigrations give user access denied error: create the database and set user as admin
+if makemigrations give user access denied error: create the database and set user as admin  
 
 creating the database and setting user as admin (in MySQL cli):
 ```bash
@@ -76,5 +76,6 @@ run the frontend:
 ```bash
 cd frontend
 npm install
+npm start
 ```
 test the connection by creating a new user in the app, and checking the database in MySQL workbench for updates.
