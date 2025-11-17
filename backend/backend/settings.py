@@ -115,11 +115,11 @@ DATABASES = {
         'HOST': os.getenv("DB_HOST"),
         'PORT': os.getenv("DB_PORT"),
 
-        'NAME': 'cartiq_db',
-        'USER': 'yourusername',         # match the name you picked
-        'PASSWORD': 'yourpassword',     # match the password you picked
-        'HOST': 'localhost',
-        'PORT': '3306',
+        # 'NAME': 'cartiq_db',
+        # 'USER': 'cartiq_local',         # match the name you picked
+        # 'PASSWORD': 'password',     # match the password you picked
+        # 'HOST': 'localhost',
+        # 'PORT': '3306',
 
     }
 }
